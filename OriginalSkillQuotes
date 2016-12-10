@@ -1,0 +1,147 @@
+/* eslint-disable  func-names */
+/* eslint quote-props: ["error", "consistent"]*/
+/**
+ * This sample demonstrates a simple skill built with the Amazon Alexa Skills
+ * nodejs skill development kit.
+ * This sample supports multiple lauguages. (en-US, en-GB, de-DE).
+ * The Intent Schema, Custom Slots and Sample Utterances for this skill, as well
+ * as testing instructions are located at https://github.com/alexa/skill-sample-nodejs-fact
+ **/
+
+'use strict';
+
+const Alexa = require('alexa-sdk');
+
+const APP_ID = 'amzn1.ask.skill.41069185-c35a-43ae-b438-e16e379e03e3';  // TODO replace with your app ID (OPTIONAL).
+
+const languageStrings = {
+    'en-GB': {
+        translation: {
+            FACTS: [
+                'Linda Woolverton who made Beauty and the Beast and Alice in Wonderland and The Lion King said quote</s>   Its not the castle. Its the path to the castle that make a life.',
+                'Max Landis who made Chronicle and Victor Frankenstein and American Ultra said quote</s>   Stop looking at this notecard. Write five sentences, then look again.',
+                'Steve Coogen who made Philomena and Alan Partridge and Despicable Me 2 said quote</s>   Your opinion is as valid as anyone elses.',
+                'John McNamara who made Trumbo and Aquarius and Lois and Clark. The New Adventures of Superman said quote</s>   Write. Now. Peace Sign',
+                'Cary Fukunaga who made Beasts of No Nation and Jane Eyre and Sin Nombre said quote</s>   Outline  Outline  Outline. then write fast Write 10 pages a day Then the next day edit that And write 10 more. If youre stuck on a scene, skip it. Whatever you do, once you have your momentum, dont stop. And when your dont force it and write shit until it isnt shit.',
+                'Richard Shepard who made The Matador and The Hunting Party and Salem said quote</s>   Get off the internet',
+                'James Vanderbilt who made The Amazing Spider-Man and Zodiac and The Amazing SpiderMan 2 said quote</s>   Make stuff. As much as you can.',
+                'Kate Siegel who made Hush and Oculus and The Curse of the Black Dahlia said quote</s>   When in doubt - breath.',
+                'Mike Flanagan who made Hush and Oculus and Absentia said quote</s>   Never give up. Never. No matter what anybody tells you, or how frustrated you are.',
+                'Bill Taub who made Mission Genesis and Another Day and Fridays Curse said quote</s>   Write what you want to see.',
+                'Linda Woolverton who made Beauty and the Beast and Alice in Wonderland and The Lion King said quote</s>   Its not the castle. Its the path to the castle that make a life.',
+                'Max Landis who made Chronicle and Victor Frankenstein and American Ultra said quote</s>   Stop looking at this notecard. Write five sentences, then look again.',
+                'Steve Coogen who made Philomena and Alan Partridge and Despicable Me 2 said quote</s>   Your opinion is as valid as anyone elses.',
+                'Graham Henman who made Bone In The Throat and Doctor Ducks Super Secret All-Purpose Sauce and Architecture of Reassurance said quote</s>   Never letcatch your actors acting.',
+                'Fred Schepisi who made Roxanne and Six Degrees of Separation and A Cry in the Dark said quote </s> Persist, you will prevail.',
+                'Winnie Holzman who made My So-Called Life and Once and Again and Til There Was You said quote </s> Do your best and let go of the result!',
+                'John Strauss who made Theres Something About Mary and The Santa Clause 2 and The Wild said quote </s> THERE IS NO SUBSTITUTE FOR WRITING EVERY SINGLE DAY. WRITE WRITE WRITE.',
+                'David Gelb who made Jiro Dreams of Sushi and The Lazarus Effect and Chefs Table said quote </s> When telling a story, lean into the truth.',
+                'Sato Shinsuke who made The Princess Blade and The Time of Death and I Am a Hero said quote </s> Keep making things.',
+                'Ali Adler who made Supergirl and Chuck and The New Normal said quote </s> YOU MUST  ACTUALLY PUT YOUR ASS IN CHAIR EVERYDAY AND WRITE.',
+            ],
+            SKILL_NAME: 'British Space Facts',
+            GET_FACT_MESSAGE: "Here's your writing card: ",
+            HELP_MESSAGE: 'You can say launch writing quotes, read me screenwriting advice, or, you can say exit... What can I help you with?',
+            HELP_REPROMPT: 'What can I help you with?',
+            STOP_MESSAGE: 'Goodbye!',
+        },
+    },
+    'en-US': {
+        translation: {
+            FACTS: [
+                'Shane Black who made Lethal Weapon and The Last Boy Scout and The Long Kiss Goodnight said quote</s>   When youre writing and feeling antsy, look at these words; THIS IS IMPORTANT.',
+                'Roberto Orci who made Transformers and The Amazing Spider-Man 2 and Star Trek said quote</s>   Read the scripts of the movies you love.',
+                'Christopher Markus who made Captain America: The Winter Soldier and Captain America: The First Avenger and Thor: The Dark World said quote</s>   Dont love your first draft too much.',
+                'David Goyer who made Batman Begins and The Dark Knight and Man of Steel  said quote</s>   Writing is rewriting. Revise. Revise. Revisit.',
+                'Simon Kinberg who made X-Men: Days of Future Past and X-Men: Apocalypse and Sherlock Holmes said quote</s>   Keep writing!',
+                'Seth Grahame-Smith who made Dark Shadows and Abraham Lincoln: Vampire Hunter and Pride and Prejudice and Zombies said quote</s>   I dont care if youre not into it today, Keep Writing.',
+                'Marc Webb who made The Amazing Spider-Man and 500 Days of Summer and The Amazing Spider-Man 2 said quote</s>   Get inside the head of the character and deliver that to the audience.',
+                'Glen Mazzara who made The Walking Dead and Damien and Crash said quote</s>   LISTEN',
+                'Jim Taylor who made Sideways and Jurassic Park III and About Schmidt said quote</s>   Keep it real',
+                'Vena Sud who made The Killing and Cold Case and One Night said quote</s>   Watch everything, read everything.',
+                'Meredith Stiehm who made Cold Case and The Bridge and Homeland said quote</s>   whats important now? WIN',
+                'James Wan who made Saw and Insidious: Chapter 2 and Furious 7 said quote</s>   Start with low budget - to have creative freedom. Make it unique!',
+                'Colin Trevorrow who made Jurassic World and Safety Not Guaranteed and Star Wars: Episode IX said quote</s>   Trust your instincts.',
+                'Ed Soloman who made Men in Black and Now You See Me and Charlies Angels said quote</s>   Stay open, keep moving, be patient, work hard',
+                'Pam Veasey who made CSI: NY and In Living Color and The District said quote</s>   Think out of the box!',
+                'Scott Alexander who made 1408 and Ed Wood and Man on the Moon said quote</s>   Dont print out until you get to the end. And dont give anyone your first draft',
+                'Larry Karaszewski who made Big Eyes and Ed Wood and Man on the Moon said quote</s>   Get to work!',
+                'Mark L Smith who made The Revenant and Vacancy and Vacancy 2: The First Cut said quote</s>   Its a battle of attrition- Just have to outlive the bastards!',
+                'Rhett Reese who made Deadpool and Zombieland and G.I. Joe: Retaliation said quote</s>   T-1000',
+                'Paul Wernick who made Deadpool and Zombieland and G.I. Joe: Retaliation said quote</s>   Sit back down.',
+            ],
+            SKILL_NAME: 'American Space Facts',
+            GET_FACT_MESSAGE: "Here's your writing card: ",
+            HELP_MESSAGE: 'You can say launch writing quotes, read me screenwriting advice, or, you can say exit... What can I help you with?',
+            HELP_REPROMPT: 'What can I help you with?',
+            STOP_MESSAGE: 'Goodbye!',
+        },
+    },
+    'de-DE': {
+        translation: {
+            FACTS: [
+                'Ein Jahr dauert auf dem Merkur nur 88 Tage.',
+                'Die Venus ist zwar weiter von der Sonne entfernt, hat aber höhere Temperaturen als Merkur.',
+                'Venus dreht sich entgegen dem Uhrzeigersinn, möglicherweise aufgrund eines früheren Zusammenstoßes mit einem Asteroiden.',
+                'Auf dem Mars erscheint die Sonne nur halb so groß wie auf der Erde.',
+                'Die Erde ist der einzige Planet, der nicht nach einem Gott benannt ist.',
+                'Jupiter hat den kürzesten Tag aller Planeten.',
+                'Die Milchstraßengalaxis wird in etwa 5 Milliarden Jahren mit der Andromeda-Galaxis zusammenstoßen.',
+                'Die Sonne macht rund 99,86 % der Masse im Sonnensystem aus.',
+                'Die Sonne ist eine fast perfekte Kugel.',
+                'Eine Sonnenfinsternis kann alle ein bis zwei Jahre eintreten. Sie ist daher ein seltenes Ereignis.',
+                'Der Saturn strahlt zweieinhalb mal mehr Energie in den Weltraum aus als er von der Sonne erhält.',
+                'Die Temperatur in der Sonne kann 15 Millionen Grad Celsius erreichen.',
+                'Der Mond entfernt sich von unserem Planeten etwa 3,8 cm pro Jahr.',
+            ],
+            SKILL_NAME: 'Weltraumwissen auf Deutsch',
+            GET_FACT_MESSAGE: 'Hier sind deine Fakten: ',
+            HELP_MESSAGE: 'Du kannst sagen, „Nenne mir einen Fakt über den Weltraum“, oder du kannst „Beenden“ sagen... Wie kann ich dir helfen?',
+            HELP_REPROMPT: 'Wie kann ich dir helfen?',
+            STOP_MESSAGE: 'Auf Wiedersehen!',
+        },
+    },
+};
+
+const handlers = {
+    'LaunchRequest': function () {
+        this.emit('GetFact');
+    },
+    'GetNewFactIntent': function () {
+        this.emit('GetFact');
+    },
+    'GetFact': function () {
+        // Get a random space fact from the space facts list
+        // Use this.t() to get corresponding language data
+        const factArr = this.t('FACTS');
+        const factIndex = Math.floor(Math.random() * factArr.length);
+        const randomFact = factArr[factIndex];
+
+        // Create speech output
+        const speechOutput = this.t('GET_FACT_MESSAGE') + randomFact;
+        this.emit(':tellWithCard', speechOutput, this.t('SKILL_NAME'), randomFact);
+    },
+    'AMAZON.HelpIntent': function () {
+        const speechOutput = this.t('HELP_MESSAGE');
+        const reprompt = this.t('HELP_MESSAGE');
+        this.emit(':ask', speechOutput, reprompt);
+    },
+    'AMAZON.CancelIntent': function () {
+        this.emit(':tell', this.t('STOP_MESSAGE'));
+    },
+    'AMAZON.StopIntent': function () {
+        this.emit(':tell', this.t('STOP_MESSAGE'));
+    },
+    'SessionEndedRequest': function () {
+        this.emit(':tell', this.t('STOP_MESSAGE'));
+    },
+};
+
+exports.handler = (event, context) => {
+    const alexa = Alexa.handler(event, context);
+    alexa.APP_ID = APP_ID;
+    // To enable string internationalization (i18n) features, set a resources object.
+    alexa.resources = languageStrings;
+    alexa.registerHandlers(handlers);
+    alexa.execute();
+};
